@@ -1,19 +1,9 @@
 name: Deploy PyConTW sites to branch
 
-on:
-  workflow_dispatch:
-    inputs:
-      year:
-        description: The year of official website that haven't been archived e.g. "2021"
-        required: true
-      base_url:
-        description: 'Dynamic base url for different domain e.g. "/pycon_archive_past_website"'
-        required: true
+on: push
 
 jobs:
   deploy-dev-pycontw-sites:
-    if:
-      ${{github.event.inputs.year > 2020 }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -30,11 +20,8 @@ jobs:
           pipenv install
       - name: Crawl Past PyConTW Websites
         run: |
-          pipenv run python3 main.py -y ${{github.event.inputs.year}} --base ${{github.event.inputs.base_url}}
-          mkdir build; mv ${{github.event.inputs.year}}/ build/
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@4.1.4
-        with:
-          branch: gh-pages
-          folder: build
-          clean: false
+          pipenv run python3 pycon_archive_past_website/pycon_archive_past_website.py -y 2016 --base https://tw.pycon.org
+          pipenv run python3 pycon_archive_past_website/pycon_archive_past_website.py -y 2017 --base https://tw.pycon.org
+          pipenv run python3 pycon_archive_past_website/pycon_archive_past_website.py -y 2018 --base https://tw.pycon.org
+          pipenv run python3 pycon_archive_past_website/pycon_archive_past_website.py -y 2019 --base https://tw.pycon.org
+          pipenv run python3 pycon_archive_past_website/pycon_archive_past_website.py -y 2020 --base https://tw.pycon.org
